@@ -12,13 +12,13 @@ Softcore world mode and per-player progress are stored in overworld `SavedData`.
 
 ## Build
 
-Use Java 17 and Gradle 7.5.1, then run:
+Use Java 17, then run the Gradle Wrapper:
 
 ```sh
-gradle --no-daemon clean test build
+./gradlew --no-daemon clean test build
 ```
 
-The mod JAR is written to `build/libs/`. GitHub Actions runs tests and the build on pushes and pull requests, and stores the JAR as a workflow artifact.
+On Windows, use `gradlew.bat --no-daemon clean test build`. The Wrapper downloads the official Gradle 7.5.1 distribution and verifies its published SHA-256 checksum. The mod JAR is written to `build/libs/`. GitHub Actions runs tests and the build on pushes or by manual dispatch, then stores the JAR as a workflow artifact.
 
 ## Scope notes
 
