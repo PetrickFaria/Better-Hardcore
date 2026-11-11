@@ -52,7 +52,6 @@ jar {
         'Specification-Version': '1',
         'Implementation-Title': project.name,
         'Implementation-Version': project.version.toString(),
-        'Implementation-Vendor': 'PetrickFaria',
-        'MixinConfigs': 'mixins.betterhardcore.json'
+        'Implementation-Vendor': 'PetrickFaria'
     ])
 }

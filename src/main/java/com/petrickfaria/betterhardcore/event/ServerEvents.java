@@ -25,6 +25,9 @@ public final class ServerEvents {
         } else {
             SoftcoreSelection.consume();
         }
+        if (data.mode() == WorldMode.SOFTCORE) {
+            event.getServer().setDefaultGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        }
     }
 
     @SubscribeEvent
@@ -52,6 +55,7 @@ public final class ServerEvents {
             }
             setMaxHealth(player, progress.maxHealth());
             if (progress.permanentlyDead()) player.setGameMode(net.minecraft.world.level.GameType.SPECTATOR);
+            else if (player.isCreative()) player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
             else if (player.isDeadOrDying() || player.getHealth() <= 0.0F) player.setHealth(progress.maxHealth());
             else player.setHealth(Math.min(player.getHealth(), progress.maxHealth()));
         }
