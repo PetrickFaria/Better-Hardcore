@@ -84,7 +84,7 @@ class SoftcoreRulesTest {
 
     @Test void simulatedTwelveHoursStopsAtFifteenHearts() {
         var progress = p(SoftcoreRules.START_HEALTH, 0);
-        for (int tick = 0; tick < 12 * SoftcoreRules.TICKS_PER_REWARD; tick++) {
+        for (int tick = 0; tick < 24 * SoftcoreRules.TICKS_PER_REWARD; tick++) {
             progress = SoftcoreRules.tick(progress, true);
         }
         assertEquals(SoftcoreRules.MAX_HEALTH, progress.maxHealth());
