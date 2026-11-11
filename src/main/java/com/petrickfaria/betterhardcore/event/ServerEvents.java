@@ -46,8 +46,8 @@ public final class ServerEvents {
         if (!(entity instanceof ServerPlayer player)) return;
         BetterHardcoreData data = BetterHardcoreData.get(player.getServer());
         if (data.mode() == WorldMode.HARDCORE) {
-            setMaxHealth(player, 14);
-            player.setHealth(Math.min(player.getHealth(), 14.0F));
+            setMaxHealth(player, SoftcoreRules.HARDCORE_START_HEALTH);
+            player.setHealth(Math.min(player.getHealth(), (float) SoftcoreRules.HARDCORE_START_HEALTH));
         } else if (data.mode() == WorldMode.SOFTCORE) {
             SoftcoreRules.Progress progress = data.progress(player.getUUID());
             if (!data.hasProgress(player.getUUID())) {

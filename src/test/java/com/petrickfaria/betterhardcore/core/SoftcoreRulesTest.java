@@ -12,6 +12,11 @@ class SoftcoreRulesTest {
         assertEquals(7, SoftcoreRules.tick(p(6, SoftcoreRules.TICKS_PER_REWARD - 1), true).maxHealth());
     }
 
+    @Test void hardcoreStartsAtSevenHeartsWithoutUsingSoftcoreProgression() {
+        assertEquals(14, SoftcoreRules.HARDCORE_START_HEALTH);
+        assertEquals(6, SoftcoreRules.START_HEALTH);
+    }
+
     @Test void timeCountsOnlyWhileAlive() {
         var current = p(6, 50);
         assertEquals(current, SoftcoreRules.tick(current, false));
@@ -75,5 +80,14 @@ class SoftcoreRulesTest {
         assertEquals(SoftcoreRules.TICKS_PER_REWARD - 1, deadPlayer.survivedTicks());
         var permanent = new SoftcoreRules.Progress(2, 30, true);
         assertEquals(permanent, SoftcoreRules.tick(permanent, true));
+    }
+
+    @Test void simulatedTwelveHoursStopsAtFifteenHearts() {
+        var progress = p(SoftcoreRules.START_HEALTH, 0);
+        for (int tick = 0; tick < 12 * SoftcoreRules.TICKS_PER_REWARD; tick++) {
+            progress = SoftcoreRules.tick(progress, true);
+        }
+        assertEquals(SoftcoreRules.MAX_HEALTH, progress.maxHealth());
+        assertEquals(0, progress.survivedTicks());
     }
 }

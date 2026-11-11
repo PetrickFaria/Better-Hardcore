@@ -2,6 +2,7 @@ package com.petrickfaria.betterhardcore.core;
 
 /** Pure rules shared by the server implementation and automated tests. Values are health points, not hearts. */
 public final class SoftcoreRules {
+    public static final int HARDCORE_START_HEALTH = 14;
     public static final int START_HEALTH = 6;
     public static final int MAX_HEALTH = 30;
     public static final int DEATH_PENALTY = 2;
