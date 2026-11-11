@@ -4,6 +4,7 @@ import com.petrickfaria.betterhardcore.client.SoftcoreSelection;
 import com.petrickfaria.betterhardcore.core.SoftcoreRules;
 import com.petrickfaria.betterhardcore.data.BetterHardcoreData;
 import com.petrickfaria.betterhardcore.data.WorldMode;
+import com.petrickfaria.betterhardcore.network.NetworkHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.event.TickEvent;
@@ -27,7 +28,10 @@ public final class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) { apply(event.getEntity()); }
+    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        apply(event.getEntity());
+        if (event.getEntity() instanceof ServerPlayer player) NetworkHandler.sync(player, BetterHardcoreData.get(player.getServer()).mode());
+    }
 
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) { apply(event.getEntity()); }
@@ -54,7 +58,10 @@ public final class ServerEvents {
     }
 
     public static void refreshPlayers(net.minecraft.server.MinecraftServer server) {
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) apply(player);
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            apply(player);
+            NetworkHandler.sync(player, BetterHardcoreData.get(server).mode());
+        }
     }
 
     private static void setMaxHealth(ServerPlayer player, int value) {

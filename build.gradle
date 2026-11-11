@@ -22,14 +22,28 @@ minecraft {
     }
 }
 
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+}
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.5.0'
+    compileOnly 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }
 
-tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += [
+        "-AoutRefMapFile=${buildDir}/generated/mixin/betterhardcore.refmap.json",
+        '-AdefaultObfuscationEnv=searge'
+    ]
+}
+sourceSets.main.resources.srcDir("${buildDir}/generated/mixin")
+tasks.named('compileJava').configure { doFirst { file("${buildDir}/generated/mixin").mkdirs() } }
+tasks.named('processResources').configure { dependsOn tasks.named('compileJava') }
 tasks.named('test', Test).configure { useJUnitPlatform() }
 
 jar {
@@ -39,6 +53,7 @@ jar {
         'Specification-Version': '1',
         'Implementation-Title': project.name,
         'Implementation-Version': project.version.toString(),
-        'Implementation-Vendor': 'PetrickFaria'
+        'Implementation-Vendor': 'PetrickFaria',
+        'MixinConfigs': 'mixins.betterhardcore.json'
     ])
 }

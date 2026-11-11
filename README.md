@@ -22,4 +22,4 @@ The mod JAR is written to `build/libs/`. GitHub Actions runs tests and the build
 
 ## Scope notes
 
-The Create World control is a Softcore toggle alongside Minecraft's existing mode controls; Minecraft 1.19.2 does not permit adding a GameType enum value safely. The generated world remains Survival internally and Softcore identity is persisted separately. Manual checks in a Forge 43.5.0 client and a dedicated server are still needed for the world-creation UI, heart art, reconnect, dimension changes, and multiplayer behavior.
+The Create World control is a Softcore toggle alongside Minecraft's existing mode controls; Minecraft 1.19.2 does not permit adding a GameType enum value safely. The generated world remains Survival internally and Softcore identity is persisted separately. A localized client mixin switches the HUD to Minecraft's existing Hardcore full and half heart sprites while preserving poison, wither, and freezing variants. Manual checks in a Forge 43.5.0 client and a dedicated server are still needed for the world-creation UI, heart art, reconnect, dimension changes, and multiplayer behavior.

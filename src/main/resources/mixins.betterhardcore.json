@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.petrickfaria.betterhardcore.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "betterhardcore.refmap.json",
+  "client": ["GuiMixin"],
+  "injectors": { "defaultRequire": 1 }
+}

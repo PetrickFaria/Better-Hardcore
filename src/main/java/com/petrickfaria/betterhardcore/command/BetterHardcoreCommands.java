@@ -39,7 +39,7 @@ public final class BetterHardcoreCommands {
                                     }
                                     BetterHardcoreData.get(context.getSource().getServer()).setMode(mode);
                                     ServerEvents.refreshPlayers(context.getSource().getServer());
-                                    context.getSource().sendSuccess(() -> Component.literal("Better Hardcore mode set to " + mode.name().toLowerCase() + "."), true);
+                                    context.getSource().sendSuccess(Component.literal("Better Hardcore mode set to " + mode.name().toLowerCase() + "."), true);
                                     return 1;
                                 }))));
     }
