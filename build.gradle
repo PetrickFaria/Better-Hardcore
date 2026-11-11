@@ -1,5 +1,6 @@
 plugins {
     id 'net.minecraftforge.gradle' version '[5.1,5.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 group = 'com.petrickfaria.betterhardcore'
@@ -36,15 +37,13 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.compilerArgs += [
-        "-AoutRefMapFile=${buildDir}/generated/mixin/betterhardcore.refmap.json",
-        '-AdefaultObfuscationEnv=searge'
-    ]
 }
-sourceSets.main.resources.srcDir("${buildDir}/generated/mixin")
-tasks.named('compileJava').configure { doFirst { file("${buildDir}/generated/mixin").mkdirs() } }
-tasks.named('processResources').configure { dependsOn tasks.named('compileJava') }
 tasks.named('test', Test).configure { useJUnitPlatform() }
+
+mixin {
+    add sourceSets.main, 'betterhardcore.refmap.json'
+    config 'mixins.betterhardcore.json'
+}
 
 jar {
     manifest.attributes([
