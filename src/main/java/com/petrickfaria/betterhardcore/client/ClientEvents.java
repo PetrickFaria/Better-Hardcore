@@ -13,6 +13,11 @@ public final class ClientEvents {
     private ClientEvents() {}
 
     @SubscribeEvent
+    public static void resetSelectionWhenOpeningWorldCreation(ScreenEvent.Opening event) {
+        if (event.getNewScreen() instanceof CreateWorldScreen) SoftcoreSelection.setSelected(false);
+    }
+
+    @SubscribeEvent
     public static void addSoftcoreChoice(ScreenEvent.Init.Post event) {
         if (!(event.getScreen() instanceof CreateWorldScreen screen)) return;
         int x = screen.width / 2 - 100;

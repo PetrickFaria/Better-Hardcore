@@ -88,7 +88,7 @@ public final class ServerEvents {
         if (data.mode() != WorldMode.SOFTCORE) return;
         if (!data.hasProgress(player.getUUID())) data.setProgress(player.getUUID(), data.progress(player.getUUID()));
         SoftcoreRules.Progress before = data.progress(player.getUUID());
-        SoftcoreRules.Progress after = SoftcoreRules.tick(before, player.isAlive() && !player.isSpectator());
+        SoftcoreRules.Progress after = SoftcoreRules.tick(before, player.isAlive() && !player.isCreative() && !player.isSpectator());
         if (!before.equals(after)) {
             data.setProgress(player.getUUID(), after);
             if (after.maxHealth() != before.maxHealth()) {
