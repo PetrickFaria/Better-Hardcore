@@ -26,7 +26,7 @@ public final class ServerEvents {
             SoftcoreSelection.consume();
         }
         if (data.mode() == WorldMode.SOFTCORE) {
-            event.getServer().setDefaultGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+            event.getServer().setDefaultGameType(net.minecraft.world.level.GameType.SURVIVAL);
         }
     }
 
