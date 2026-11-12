@@ -31,6 +31,7 @@ public final class ClientEvents {
         if (vanillaButton == null) return;
 
         String currentVanillaMode = vanillaButton.getValue() instanceof Enum<?> mode ? mode.name() : "SURVIVAL";
+        boolean includeDebug = "DEBUG".equals(currentVanillaMode) || vanillaOffersDebug(vanillaButton);
         WorldModeChoice initial = SoftcoreSelection.isSelected()
                 ? WorldModeChoice.SOFTCORE
                 : WorldModeChoice.fromVanillaName(currentVanillaMode);
@@ -38,7 +39,7 @@ public final class ClientEvents {
         event.removeListener(vanillaButton);
         CycleButton<WorldModeChoice> integratedButton = CycleButton.<WorldModeChoice>builder(
                         choice -> Component.translatable(choice.displayKey()))
-                .withValues(WorldModeChoice.values())
+                .withValues(WorldModeChoice.choices(includeDebug))
                 .withInitialValue(initial)
                 .withTooltip(choice -> choice.isSoftcore()
                         ? Minecraft.getInstance().font.split(
@@ -60,6 +61,25 @@ public final class ClientEvents {
         SoftcoreSelection.setSelected(choice.isSoftcore());
         setVanillaGameMode(screen, choice.vanillaGameMode());
         ((CreateWorldScreenAccess) screen).betterhardcore$refreshModeHelp(choice);
+    }
+
+    private static boolean vanillaOffersDebug(CycleButton<?> button) {
+        try {
+            for (Field field : CycleButton.class.getDeclaredFields()) {
+                if (!CycleButton.ValueListSupplier.class.isAssignableFrom(field.getType())) continue;
+                field.setAccessible(true);
+                CycleButton.ValueListSupplier<?> values = (CycleButton.ValueListSupplier<?>) field.get(button);
+                return containsMode(values.getDefaultList(), "DEBUG")
+                        || containsMode(values.getSelectedList(), "DEBUG");
+            }
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+            // A screen variant that does not expose the vanilla debug option keeps the four standard choices.
+        }
+        return false;
+    }
+
+    private static boolean containsMode(List<?> values, String name) {
+        return values.stream().anyMatch(value -> value instanceof Enum<?> mode && name.equals(mode.name()));
     }
 
     /**
