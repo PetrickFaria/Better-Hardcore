@@ -1,10 +1,15 @@
 package com.petrickfaria.betterhardcore.client;
 
-import net.minecraft.client.gui.components.Button;
+import com.petrickfaria.betterhardcore.mixin.CreateWorldScreenMixin;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Optional;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -18,16 +23,31 @@ public final class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void addSoftcoreChoice(ScreenEvent.Init.Post event) {
+    public static void replaceVanillaModeChoice(ScreenEvent.Init.Post event) {
         if (!(event.getScreen() instanceof CreateWorldScreen screen)) return;
-        int x = screen.width / 2 - 100;
-        int y = screen.height - 56;
-        Button button = new Button(x, y, 200, 20, label(), b -> {
-            SoftcoreSelection.setSelected(!SoftcoreSelection.isSelected());
-            b.setMessage(label());
-        }, (b, poseStack, mouseX, mouseY) -> screen.renderTooltip(poseStack,
-                Component.literal("Softcore: 3 hearts, survival-based growth, and a heart lost on death."), mouseX, mouseY));
-        event.addListener(button);
+
+        CreateWorldScreenAccess access = (CreateWorldScreenAccess) screen;
+        CycleButton<?> vanillaButton = access.betterhardcore$getModeButton();
+        if (vanillaButton == null) return;
+
+        String currentVanillaMode = vanillaButton.getValue() instanceof Enum<?> mode ? mode.name() : "SURVIVAL";
+        WorldModeChoice initial = SoftcoreSelection.isSelected()
+                ? WorldModeChoice.SOFTCORE
+                : WorldModeChoice.fromVanillaName(currentVanillaMode);
+
+        event.removeListener(vanillaButton);
+        CycleButton<WorldModeChoice> integratedButton = CycleButton.<WorldModeChoice>builder(
+                        choice -> Component.translatable(choice.displayKey()))
+                .withValues(WorldModeChoice.values())
+                .withInitialValue(initial)
+                .withTooltip(choice -> choice.isSoftcore()
+                        ? Optional.of(Tooltip.create(Component.translatable("betterhardcore.mode.softcore.description")))
+                        : Optional.empty())
+                .create(vanillaButton.x, vanillaButton.y, vanillaButton.getWidth(), vanillaButton.getHeight(),
+                        Component.translatable("selectWorld.gameMode"),
+                        (button, choice) -> applyChoice(screen, choice));
+        event.addListener(integratedButton);
+        applyChoice(screen, initial);
     }
 
     @SubscribeEvent
@@ -35,7 +55,31 @@ public final class ClientEvents {
         ClientWorldState.setSoftcore(false);
     }
 
-    private static Component label() {
-        return Component.literal(SoftcoreSelection.isSelected() ? "Softcore: ON" : "Softcore: OFF");
+    private static void applyChoice(CreateWorldScreen screen, WorldModeChoice choice) {
+        SoftcoreSelection.setSelected(choice.isSoftcore());
+        screen.hardCore = choice == WorldModeChoice.HARDCORE;
+        setVanillaGameMode(screen, choice.vanillaGameMode());
+        ((CreateWorldScreenAccess) screen).betterhardcore$refreshModeHelp(choice);
+    }
+
+    /**
+     * SelectedGameMode is private and cannot be extended safely. Resolve its vanilla enum value
+     * by the field's runtime type, while the separate SoftcoreSelection preserves world identity.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void setVanillaGameMode(CreateWorldScreen screen, String modeName) {
+        try {
+            Field modeField = Arrays.stream(CreateWorldScreen.class.getDeclaredFields())
+                    .filter(field -> field.getType().isEnum()
+                            && field.getType().getEnclosingClass() == CreateWorldScreen.class)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("CreateWorldScreen.SelectedGameMode field was not found"));
+            modeField.setAccessible(true);
+            Class<? extends Enum> enumType = (Class<? extends Enum>) modeField.getType();
+            Object value = Enum.valueOf(enumType, modeName);
+            modeField.set(screen, value);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not apply selected Better Hardcore game mode", exception);
+        }
     }
 }
