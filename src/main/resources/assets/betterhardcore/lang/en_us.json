@@ -1,0 +1,6 @@
+{
+  "betterhardcore.mode.softcore": "Softcore",
+  "betterhardcore.mode.softcore.line1": "Start with 3 hearts; gain ½ heart every 30 min, up to 15.",
+  "betterhardcore.mode.softcore.line2": "Each death removes 1 max heart; at 1 heart, Game Over is permanent.",
+  "betterhardcore.mode.softcore.description": "Start with 3 hearts and gain half a heart every 30 minutes of survival, up to 15. Each death reduces your maximum health by 1 heart. Dying with only 1 heart results in a permanent Game Over."
+}
