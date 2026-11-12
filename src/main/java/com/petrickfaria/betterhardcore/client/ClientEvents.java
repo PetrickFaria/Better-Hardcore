@@ -1,11 +1,10 @@
 package com.petrickfaria.betterhardcore.client;
 
-import com.petrickfaria.betterhardcore.mixin.CreateWorldScreenMixin;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -41,8 +40,9 @@ public final class ClientEvents {
                 .withValues(WorldModeChoice.values())
                 .withInitialValue(initial)
                 .withTooltip(choice -> choice.isSoftcore()
-                        ? Optional.of(Tooltip.create(Component.translatable("betterhardcore.mode.softcore.description")))
-                        : Optional.empty())
+                        ? Minecraft.getInstance().font.split(
+                                Component.translatable("betterhardcore.mode.softcore.description"), 240)
+                        : List.of())
                 .create(vanillaButton.x, vanillaButton.y, vanillaButton.getWidth(), vanillaButton.getHeight(),
                         Component.translatable("selectWorld.gameMode"),
                         (button, choice) -> applyChoice(screen, choice));
