@@ -4,6 +4,6 @@
   "package": "com.petrickfaria.betterhardcore.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "betterhardcore.refmap.json",
-  "client": ["GuiMixin"],
+  "client": ["GuiMixin", "CreateWorldScreenMixin"],
   "injectors": { "defaultRequire": 1 }
 }
