@@ -1,6 +1,7 @@
 package com.petrickfaria.betterhardcore.client;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -57,14 +58,14 @@ public final class ClientEvents {
 
     private static void applyChoice(CreateWorldScreen screen, WorldModeChoice choice) {
         SoftcoreSelection.setSelected(choice.isSoftcore());
-        screen.hardCore = choice == WorldModeChoice.HARDCORE;
         setVanillaGameMode(screen, choice.vanillaGameMode());
         ((CreateWorldScreenAccess) screen).betterhardcore$refreshModeHelp(choice);
     }
 
     /**
      * SelectedGameMode is private and cannot be extended safely. Resolve its vanilla enum value
-     * by the field's runtime type, while the separate SoftcoreSelection preserves world identity.
+     * by the field's runtime type and invoke vanilla's own setter, while Softcore identity stays
+     * separate from GameType and exclusive through the single cycle button.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static void setVanillaGameMode(CreateWorldScreen screen, String modeName) {
@@ -74,10 +75,16 @@ public final class ClientEvents {
                             && field.getType().getEnclosingClass() == CreateWorldScreen.class)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("CreateWorldScreen.SelectedGameMode field was not found"));
-            modeField.setAccessible(true);
             Class<? extends Enum> enumType = (Class<? extends Enum>) modeField.getType();
             Object value = Enum.valueOf(enumType, modeName);
-            modeField.set(screen, value);
+            Method modeSetter = Arrays.stream(CreateWorldScreen.class.getDeclaredMethods())
+                    .filter(method -> method.getReturnType() == void.class
+                            && method.getParameterCount() == 1
+                            && method.getParameterTypes()[0] == enumType)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("CreateWorldScreen game mode setter was not found"));
+            modeSetter.setAccessible(true);
+            modeSetter.invoke(screen, value);
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException("Could not apply selected Better Hardcore game mode", exception);
         }
