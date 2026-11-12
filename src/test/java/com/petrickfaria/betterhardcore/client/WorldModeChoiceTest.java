@@ -9,13 +9,13 @@ import org.junit.jupiter.api.Test;
 
 class WorldModeChoiceTest {
     @Test
-    void choicesFollowTheRequestedExclusiveCycleOrder() {
+    void standardChoicesFollowTheRequestedExclusiveCycleOrder() {
         assertArrayEquals(new WorldModeChoice[]{
                 WorldModeChoice.SURVIVAL,
                 WorldModeChoice.CREATIVE,
                 WorldModeChoice.HARDCORE,
                 WorldModeChoice.SOFTCORE
-        }, WorldModeChoice.values());
+        }, WorldModeChoice.standardChoices().toArray());
     }
 
     @Test
@@ -25,5 +25,12 @@ class WorldModeChoiceTest {
         assertFalse(WorldModeChoice.SURVIVAL.isSoftcore());
         assertFalse(WorldModeChoice.CREATIVE.isSoftcore());
         assertFalse(WorldModeChoice.HARDCORE.isSoftcore());
+    }
+
+    @Test
+    void anExistingDebugOptionCanRemainAvailableAfterTheStandardChoices() {
+        assertEquals(WorldModeChoice.DEBUG, WorldModeChoice.choices(true).get(4));
+        assertEquals("DEBUG", WorldModeChoice.DEBUG.vanillaGameMode());
+        assertEquals(4, WorldModeChoice.choices(false).size());
     }
 }
