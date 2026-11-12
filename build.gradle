@@ -1,0 +1,57 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[5.1,5.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+group = 'com.petrickfaria.betterhardcore'
+version = '1.0.0'
+archivesBaseName = 'BetterHardcore'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: '1.19.2'
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'info'
+            mods { betterhardcore { source sourceSets.main } }
+        }
+        client {}
+        server { args '--nogui' }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.19.2-43.5.0'
+    compileOnly 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+tasks.named('test', Test).configure { useJUnitPlatform() }
+
+mixin {
+    add sourceSets.main, 'betterhardcore.refmap.json'
+    config 'mixins.betterhardcore.json'
+}
+
+jar {
+    manifest.attributes([
+        'Specification-Title': 'Better Hardcore',
+        'Specification-Vendor': 'PetrickFaria',
+        'Specification-Version': '1',
+        'Implementation-Title': project.name,
+        'Implementation-Version': project.version.toString(),
+        'Implementation-Vendor': 'PetrickFaria'
+    ])
+}
