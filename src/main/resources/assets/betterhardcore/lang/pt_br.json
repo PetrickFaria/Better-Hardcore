@@ -1,0 +1,6 @@
+{
+  "betterhardcore.mode.softcore": "Softcore",
+  "betterhardcore.mode.softcore.line1": "Comece com 3 corações; ganhe ½ coração a cada 30 min, até 15.",
+  "betterhardcore.mode.softcore.line2": "Cada morte tira 1 coração máximo; com 1, o Game Over é definitivo.",
+  "betterhardcore.mode.softcore.description": "Comece com 3 corações e ganhe meio coração a cada 30 minutos de sobrevivência, até o limite de 15. Cada morte reduz sua vida máxima em 1 coração. Morrer com apenas 1 coração resulta em Game Over definitivo."
+}
